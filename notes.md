@@ -23,24 +23,37 @@ mapping cols to json
 - en               // N : english
 - zh               // O : english
 - ci               // P : city
-- ci 'sa           // Q : street address
+- sa               // Q : street address
 - links            // R : pdf[]
 - flags            // S : [RT..]
 - npages           // T : number of pages
 - rev              // U : revision date (Update)
 - com              // V : comments
 - ori              // W : origine source du document.
+- auteurs          from isoc
+- indexName        from isoc (titres) messy!
 ```
 
 #### `reformat.js`
 - convert CC (country codes) into ISO.
 - trim all fields
 - extract {legalName, aka} from isoc (sec 1, sec 2)
-- extract {titre, auteurs} from isoc (sec>=3)
+- extract {titre, auteurs} from isoc (sec>=3) => new entries
 - normalize/split flags: deleted, restricted, transcription
 - split h2 (col I) into multiple {keywords-products}
 - split mk (col M) into multiple marques
 - merge cols (R,T) into links[] multiple {fn,np} (pdf-fileNAme, #pages)
+
+#### `101-validate-xlsx.js`
+
+- ignore deleted.
+- collect auteurs into index
+- create index des titres classes by auteurs.
+
+
+
+
+
 
 #### LOG.
 
