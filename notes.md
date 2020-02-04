@@ -44,12 +44,12 @@ mapping cols to json
 - split mk (col M) into multiple marques
 - merge cols (R,T) into links[] multiple {fn,np} (pdf-fileNAme, #pages)
 
-#### `101-validate-xlsx.js`
+#### `101-xlsx2json.js`
 
-- ignore deleted.
+- ignore deleted entries
 - collect auteurs into index
 - create index des titres classes by auteurs.
-
+-
 
 
 

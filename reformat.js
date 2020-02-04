@@ -72,9 +72,10 @@ function isoc12(isoc) {
 }
 
 
-function isoc3 (isoc) {
+function isoc3 (isoc, xid) {
   /*
-      proteger les points dans les parenteses; split on "|".
+      (1) proteger les points dans les parenteses;
+      (2) split on "|" : v[0] is {auteurs,titre}, v[1..] are index entries....
   */
   const v = isoc.replace(/\([^\)]*\)/g,($)=>{
     return $.replace(/\./g,'~');
@@ -85,8 +86,12 @@ function isoc3 (isoc) {
       <auteur>,<auteur>(dot)<titre>
   */
 
-  const vv = v[0].split('.').map(it=>(it.trim()));
-  let [va, _titre] = vv;
+
+
+  const [va, titre] = v[0].split('.').map(it=>(it.trim()));
+
+  console.log(`@88 [${xid}] au:(${va}) titre:(${titre||'MISSING TITRE'})`)
+  if(!titre) console.log(`@94 [${xid}] au:"${va.replace(/~/g,'.')}" titre:${titre||'MISSING TITRE'}`)
 
   /*
       Get auteurs, re-establish dots in parenteses.
@@ -95,14 +100,14 @@ function isoc3 (isoc) {
   const auteurs = va.split(',').map(it=>(it.trim().replace(/~/g,'.')));
 
   let titres = [];
-  if (_titre) titres.push(_titre.trim());
+  if (titre) titres.push(titre.trim());
 
   for (const i in v) {
     if (i >0) {
       titres.push(v[i].trim())
     }
   }
-  return {titres, auteurs} // titres are for entries in index articles.
+  return {auteurs, titres} // titres are for entries in index articles.
 }
 
 
@@ -166,7 +171,7 @@ module.exports= (json)=>{
     if (+it.sec >=3) {
       // Article - without publisher.
       // specific to mapp9 => fake publisher.
-      const {auteurs, titres} = isoc3(it.isoc)
+      const {auteurs, titres} = isoc3(it.isoc, it.xid)
       it.auteurs = auteurs;
       it.indexNames = titres;
       _assert(Array.isArray(it.auteurs));
