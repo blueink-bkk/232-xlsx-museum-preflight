@@ -61,7 +61,10 @@ mapping cols to json
 ```
 101-validate-xlsx.js
   read museum.xls (link to latest)
-  $ ln -sf 0-Heating-Museum-from-start-to-31-12-2019-FRENCN-20200203.xlsx museum.xlsx
+  $ ln -sf 0-Heating-Museum-from-start-to-31-12-2019-FRENCN-20200204.xlsx museum.xlsx
   errors/alerts are on stdout
-  $ 101-validate-xlsx | grep ALERT
+  $ ./101-xlsx2json.js | grep ALERT
+  $ ./101-xlsx2json.js |grep ^@52 >52-auteurs.txt
+  $ ./101-xlsx2json.js |grep ^@69 > 69-constructeurs.txt
+  $ ./101-xlsx2json.js |grep ^@86 > 86-marques.txt
 ```
