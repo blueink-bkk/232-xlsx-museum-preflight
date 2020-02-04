@@ -84,8 +84,9 @@ async function main() {
       const dest = path.join(fa, article.pic);
       if (fs.existsSync(dest)) fs.unlinkSync(dest)
       fs.symlinkSync(jpeg_fn, dest);
+      console.log(`@87 #${article.xid} pic symlink Ok. <${jpeg_fn}>`)
     } else {
-      console.log(`@84 #${article.xid} pic not-found <${article.pic}>`)
+      console.log(`@89 #${article.xid} pic not-found <${article.pic}>`)
     }
 
 
@@ -100,10 +101,10 @@ async function main() {
         const dest = path.join(fa, link.fn);
         if (fs.existsSync(dest)) fs.unlinkSync(dest)
         fs.symlinkSync(pdf_fn, dest);
+        console.log(`@104 #${article.xid} pdf symlink Ok. <${pdf_fn}>`)
       } else {
-        console.log(`@84 #${article.xid} pdf not-found <${link.fn}>`)
+        console.log(`@106 #${article.xid} pdf not-found <${link.fn}>`)
       }
-
     })
 
 
@@ -121,6 +122,7 @@ async function main() {
 
 function jpeg_lookup(fn) {
   const dirs = [
+    '/media/dkz/Seagate/2019-museum-assets/JPG-20191231',
     '/media/dkz/Seagate/2019-museum-assets/new-pdf-and-jpg-20190425',
     '/media/dkz/Seagate/2019-museum-assets/jpeg-www'
   ];
@@ -128,12 +130,14 @@ function jpeg_lookup(fn) {
   for (const dir of dirs) {
     const fpath = path.join(dir,fn)
     if (fs.existsSync(fpath)) return fpath
+    console.log(`@131 not-found <${fpath}>`)
   }
 }
 
 
 function pdf_lookup(fn) {
   const dirs = [
+    '/media/dkz/Seagate/2019-museum-assets/PDF-20191231',
     '/media/dkz/Seagate/2019-museum-assets/new-pdf-and-jpg-20190425',
     '/media/dkz/Seagate/2019-museum-assets/pdf-www'
   ];
