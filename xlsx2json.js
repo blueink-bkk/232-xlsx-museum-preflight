@@ -44,7 +44,6 @@ const json = XLSX.utils.sheet_to_json(workbook.Sheets[sheet1],{
 //console.log(`xlsx2json sheet1: ${json.length} lines.`);
 
 //console.log(`writing file "xlsx2json.json"`)
-jsonfile.writeFileSync(xlsx_fn+".json",json,{spaces:2})
 
 require('./reformat.js')(json);
 //jsonfile.writeFileSync('xlsx2json-reformatted.json',json,{spaces:2})

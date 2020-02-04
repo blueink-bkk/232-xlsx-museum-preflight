@@ -59,8 +59,8 @@ mapping cols to json
 
 ##### Mon Feb 3, 2020
 ```
-101-validate-xlsx.js
-  read museum.xls (link to latest)
+101-xlsx2json.js
+  create/update soft link museum.xls (to latest)
   $ ln -sf 0-Heating-Museum-from-start-to-31-12-2019-FRENCN-20200204.xlsx museum.xlsx
   errors/alerts are on stdout
   $ ./101-xlsx2json.js | grep ALERT
