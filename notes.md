@@ -68,3 +68,10 @@ mapping cols to json
   $ ./101-xlsx2json.js |grep ^@69 > 69-constructeurs.txt
   $ ./101-xlsx2json.js |grep ^@86 > 86-marques.txt
 ```
+
+##### Tue Feb 4, 2020
+```
+rm -rf ~/tmp/232-museum-data/**/*.jpg
+rm -rf ~/tmp/232-museum-data/**/*.pdf
+$ ./102-json2yaml.js ./museum.xlsx.json |grep ^@74
+```
