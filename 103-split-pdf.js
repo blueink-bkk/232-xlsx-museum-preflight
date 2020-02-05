@@ -10,7 +10,7 @@ const yaml = require('js-yaml');
 //const {realpathSync} = require('fs');
 const find = require('find'); // 2019 find.file(regex,path); find.fileSync(regex,path)
 const pdfjsLib = require('pdfjs-dist');
-
+const wrap = require('word-wrap');
 
 //const {xnor1, xnor2, xnor3} = require('./lib/utils')
 //const {api,_assert, __assert} = require('../207-jpc-catalogs-admin/lib/openacs-api')
@@ -99,10 +99,28 @@ async function main() {
       for (let pageno=1; pageno <=doc.numPages; pageno++) {
         const page = await doc.getPage(pageno);
         const textContent = await page.getTextContent();
-        pages.push(textContent.items)
-        console.log(`textContent.items:`,textContent.items)
+        const vp = textContent.items
+          .map(it =>it.str.replace(/[\(•\)\*\+\^■\{\}\|]+/g,' ')
+              .replace(/\s([,\.])/g,'$1')
+              .replace(/\s+/g,' ')
+              .replace(/([,_\.\-])[,_\.\-]+/,'$1')
+              .replace(/^[^a-zA-Z0-9]*$/g,'')
+              .replace(/­/,'<H>') // ATTENTION DISC-HYPHEN hidden here.
+              .trim())
+          .filter(it =>(it.length>2))
+        const txt = vp.join(' ').replace(/([a-zé])\-\s([a-zé])/g,'$1$2').replace(/<H>\s/g,'')
+        //if (txt.length <=10) console.log(`ALERT:`,{txt})
+
+
+        if (txt.length <50) continue;
+        if (txt.length >50) pages.push(txt); // or not enough info. just pic.
+//        console.log(`textContent.items:`,txt)
+        const txt_fn = `${path.join(fn,'..',link.fn)}-${('0000'+pageno).substr(-4)}.txt`;
+        console.log(`writing txt on <${txt_fn}>`)
+        fs.writeFileSync(txt_fn, wrap(txt,{width:80}),'utf8');
       }  // each pdf-page
 //      console.log({pages})
+//      console.log(`${pages.length} pages: ${pages.map(it=>('['+it.length+']')).join(',')}`)
     }
   }
 }
