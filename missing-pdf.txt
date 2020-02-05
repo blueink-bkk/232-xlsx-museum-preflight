@@ -1,0 +1,16 @@
+@106 #8203 pdf not-found <1979 ca Sika Thermometre Français.pdf>
+@106 #8958 pdf not-found <1951 Georgin Manuel EDF Pub 20181203.pdf>
+@106 #9148 pdf not-found <2019 Introduction historique des alliages fusibles.pdf>
+@106 #9171 pdf not-found <2019 Bases pratiques detecteurs de debit (Flussostats) 20190319.pdf>
+@106 #9174 pdf not-found <2019 Informations techniques relatives a la regulation de temperature en electrothemie 20190309.pdf>
+@106 #9182 pdf not-found <EN: 2019 Introduction to heat tracing cables 20190313.pdf>
+@106 #9188 pdf not-found <Threads sealantsCN 20190227.pdf>
+@106 #9191 pdf not-found <EN: 2019 Absolute pressure barometric pressure negative pressure differential pressure 20190302.pdf>
+@106 #9191 pdf not-found <CN: 2019 Absolute pressure barometric pressure negative pressure differential pressureCN 20190302.pdf>
+@106 #9338 pdf not-found <1953 Mistral Arts mengers N40 014 20190712.pdf>
+@106 #9417 pdf not-found <2019 Introduction historique aux resistances chauffantes flexibles en feuilles d elastomere de silicone 20191106.pdf>
+@106 #9417 pdf not-found <2019 Historical introduction to flexible heaters in silicone rubber sheets 20191106.pdf>
+@106 #9417 pdf not-found <2019 Historical introduction to flexible heaters in silicone rubber sheetsCN 20191106.pdf>
+@106 #9418 pdf not-found <2019 Introduction technique aux elements chauffants flexibles en silicone 20191106.pdf>
+@106 #9418 pdf not-found <2019 Technical introduction to Silicone heaters 20191106.pdf>
+@106 #9418 pdf not-found <2019 Technical introduction to Silicone heatersCN 20191106.pdf>
