@@ -125,7 +125,6 @@ async function main() {
 
 function jpeg_lookup(fn) {
   const dirs = [
-    '/media/dkz/Seagate/2019-museum-assets/section-4-05022020',
     '/media/dkz/Seagate/2019-museum-assets/JPG-20191231',
     '/media/dkz/Seagate/2019-museum-assets/new-pdf-and-jpg-20190425',
     '/media/dkz/Seagate/2019-museum-assets/jpeg-www'
@@ -141,7 +140,7 @@ function jpeg_lookup(fn) {
 
 function pdf_lookup(fn) {
   const dirs = [
-    '/media/dkz/Seagate/2019-museum-assets/section-4-05022020',
+    '/media/dkz/Seagate/2019-museum-assets/PDF-20200205',
     '/media/dkz/Seagate/2019-museum-assets/PDF-20191231',
     '/media/dkz/Seagate/2019-museum-assets/new-pdf-and-jpg-20190425',
     '/media/dkz/Seagate/2019-museum-assets/pdf-www'

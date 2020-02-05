@@ -33,7 +33,7 @@ const argv = require('yargs')
 
 const {verbose, output} = argv;
 //const pg_monitor = (verbose>1);
-const input_fn = argv._[0];
+const www_root = argv._[0] || '/home/dkz/tmp/232-museum-data'
 
 if (!www_root) {
   console.log(`
@@ -55,3 +55,84 @@ if (!fs.existsSync(www_root)) {
 
 
 const files = find.fileSync('index.yaml', www_root);
+//console.log({files})
+
+
+const pdf1 = '/home/dkz/tmp/232-museum-data/3001/1883 Science Pittoresque Barometre thermometre Cheminees.pdf';
+const pdf2 = '/media/dkz/Seagate/2019-museum-assets/PDF-20191231/1896 Electromecanique chauffage 20200110.pdf';
+
+const loadingTask = pdfjsLib.getDocument(pdf2);
+loadingTask.promise.then(function(pdf) {
+  // you can now use *pdf* here
+  console.log({pdf})
+});
+
+
+//return;
+
+main();
+console.log('Going async...')
+
+
+async function main() {
+  for (fn of files) {
+    const article = yaml.safeLoad(fs.readFileSync(fn, 'utf8'))
+    if (article.deleted) continue;
+//    console.log({article})
+  //  console.log(`#${article.xid} ${article.deleted?"-deleted":""}`)
+    console.log(`#${article.xid} ${article.h1} pdf:`, article.links && article.links.map(it=>it.fn));
+    if (!article.links) continue;
+    for (link of article.links) {
+      const pdf_fn = await fs.realpath(path.join(fn,'..',link.fn));
+      if (!fs.existsSync(pdf_fn)) {
+        console.log(`file not found <${pdf_fn}>`)
+        throw 'FATAL'
+      }
+//      console.log(`file :::: <${pdf_fn}>`)
+      const doc = await get_pdf_doc(pdf_fn)
+//      console.log({pdf})
+      console.log(`@72 #${article.xid} ${doc.numPages} pages for <${pdf_fn}>`)
+
+//      await split_pdf_raw_text(pdf_fn, options)
+      const pages =[];
+
+      for (let pageno=1; pageno <=doc.numPages; pageno++) {
+        const page = await doc.getPage(pageno);
+        const textContent = await page.getTextContent();
+        pages.push(textContent.items)
+        console.log(`textContent.items:`,textContent.items)
+      }  // each pdf-page
+//      console.log({pages})
+    }
+  }
+}
+
+async function get_pdf_doc(fn) {
+  return pdfjsLib.getDocument(fn).promise
+  .then(function(pdf) {
+      // you can now use *pdf* here
+    return (pdf)
+  })
+  .catch(err=>{
+    console.log({err})
+    throw err;
+  })
+}
+
+
+
+async function split_pdf_raw_text(fn, options) {
+  options = options ||{};
+  const {verbose} = options;
+  const pages =[];
+
+  verbose && console.log(`fetching pdf-document <${fn}>`);
+  const pdf_doc = pdfjsLib.getDocument(fn);
+  verbose && console.log(`found ${doc.numPages} pages for <${fn}>`);
+  for (let pageno=1; pageno <=doc.numPages; pageno++) {
+    const page = await doc.getPage(pageno);
+    const textContent = await page.getTextContent();
+    pages.push(textContent.items)
+  }  // each pdf-page
+  return pages;
+}
