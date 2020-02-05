@@ -79,14 +79,17 @@ async function main() {
           find pic (jpeg) and create a link.
     */
     if (!article.pic.endsWith('.jpg')) article.pic += '.jpg';
-    const jpeg_fn = jpeg_lookup(article.pic)
-    if (jpeg_fn) {
-      const dest = path.join(fa, article.pic);
-      if (fs.existsSync(dest)) fs.unlinkSync(dest)
-      fs.symlinkSync(jpeg_fn, dest);
-      console.log(`@87 #${article.xid} pic symlink Ok. <${jpeg_fn}>`)
-    } else {
-      console.log(`@89 #${article.xid} pic not-found <${article.pic}>`)
+
+    if (!article.pic.endsWith('.missing.jpg')) {
+      const jpeg_fn = jpeg_lookup(article.pic)
+      if (jpeg_fn) {
+        const dest = path.join(fa, article.pic);
+        if (fs.existsSync(dest)) fs.unlinkSync(dest)
+        fs.symlinkSync(jpeg_fn, dest);
+        console.log(`@87 #${article.xid} pic symlink Ok. <${jpeg_fn}>`)
+      } else {
+        console.log(`@89 #${article.xid} pic not-found <${article.pic}>`)
+      }
     }
 
 
@@ -122,6 +125,7 @@ async function main() {
 
 function jpeg_lookup(fn) {
   const dirs = [
+    '/media/dkz/Seagate/2019-museum-assets/section-4-05022020',
     '/media/dkz/Seagate/2019-museum-assets/JPG-20191231',
     '/media/dkz/Seagate/2019-museum-assets/new-pdf-and-jpg-20190425',
     '/media/dkz/Seagate/2019-museum-assets/jpeg-www'
@@ -137,6 +141,7 @@ function jpeg_lookup(fn) {
 
 function pdf_lookup(fn) {
   const dirs = [
+    '/media/dkz/Seagate/2019-museum-assets/section-4-05022020',
     '/media/dkz/Seagate/2019-museum-assets/PDF-20191231',
     '/media/dkz/Seagate/2019-museum-assets/new-pdf-and-jpg-20190425',
     '/media/dkz/Seagate/2019-museum-assets/pdf-www'
