@@ -1,5 +1,11 @@
 #! /usr/bin/env node
 
+/*************************************************
+    Instead of getting pdf-filename from YAML
+    we could directly find the pdf.
+    -Also dont rebuild if timeStamp older.
+
+**************************************************/
 const fs = require('fs-extra');
 const path = require('path');
 const assert = require('assert');
@@ -83,10 +89,14 @@ async function main() {
     console.log(`#${article.xid} ${article.h1} pdf:`, article.links && article.links.map(it=>it.fn));
     if (!article.links) continue;
     for (link of article.links) {
+      if (!fs.existsSync(path.join(fn,'..',link.fn))) {
+        console.log(`@93 ALERT pdf file-not-found <${path.join(fn,'..',link.fn)}>`)
+        continue; // ATT: BUG.
+      }
       const pdf_fn = await fs.realpath(path.join(fn,'..',link.fn));
       if (!fs.existsSync(pdf_fn)) {
-        console.log(`file not found <${pdf_fn}>`)
-        throw 'FATAL'
+        console.log(`@94 ALERT pdf file-not-found <${pdf_fn}>`)
+        continue;
       }
 //      console.log(`file :::: <${pdf_fn}>`)
       const doc = await get_pdf_doc(pdf_fn)
@@ -107,7 +117,7 @@ async function main() {
               .replace(/^[^a-zA-Z0-9]*$/g,'')
               .replace(/­/,'<H>') // ATTENTION DISC-HYPHEN hidden here.
               .trim())
-          .filter(it =>(it.length>2))
+          .filter(it =>(it.length>0))
         const txt = vp.join(' ').replace(/([a-zé])\-\s([a-zé])/g,'$1$2').replace(/<H>\s/g,'')
         //if (txt.length <=10) console.log(`ALERT:`,{txt})
 
