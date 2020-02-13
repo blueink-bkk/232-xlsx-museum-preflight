@@ -141,6 +141,7 @@ function jpeg_lookup(fn) {
 
 function pdf_lookup(fn) {
   const dirs = [
+    '/media/dkz/Seagate/2019-museum-assets/pdf-20200206',
     '/media/dkz/Seagate/2019-museum-assets/PDF-20200205',
     '/media/dkz/Seagate/2019-museum-assets/PDF-20191231',
     '/media/dkz/Seagate/2019-museum-assets/new-pdf-and-jpg-20190425',

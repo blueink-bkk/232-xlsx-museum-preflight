@@ -95,7 +95,7 @@ async function main() {
       }
       const pdf_fn = await fs.realpath(path.join(fn,'..',link.fn));
       if (!fs.existsSync(pdf_fn)) {
-        console.log(`@94 ALERT pdf file-not-found <${pdf_fn}>`)
+        console.log(`@93 ALERT pdf file-not-found <${pdf_fn}>`)
         continue;
       }
 //      console.log(`file :::: <${pdf_fn}>`)

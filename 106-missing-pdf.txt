@@ -1,7 +1,0 @@
-@106 #9152 pdf not-found <2019 Historical introduction to electric flexible heating elementsFR20190722.pdf>
-@106 #9152 pdf not-found <2019 Historical introduction to electric flexible heating elementsEN 20190722.pdf>
-@106 #9167 pdf not-found <2019 Technical introduction to flexible heating elementsFR 20190809.pdf>
-@106 #9167 pdf not-found <2019 Technical introduction to flexible heating elementsEN 20190812.pdf>
-@106 #9167 pdf not-found <2019 Technical introduction to flexible heating elementsCN 20190814.pdf>
-@106 #9167 pdf not-found <2019 Technical introduction to flexible heating elementsTH 20191106.pdf>
-@106 #9418 pdf not-found <2019 Technical introduction to Silicone heatersFR 20191106.pdf>
