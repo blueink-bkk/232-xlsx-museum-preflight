@@ -20,11 +20,11 @@ var pdfjsLib = require('pdfjs-dist');
 const klaw = require('klaw');
 
 const argv = require('yargs')
+  .alias('v','verbose').count('verbose')
   .alias('p','password')
   .alias('f','file')
   .alias('d','dir')
   .alias('a','all')
-  .alias('v','verbose')
   .alias('e','env')
 //  .alias('u','upload')
   .options({
