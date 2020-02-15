@@ -63,21 +63,22 @@ if (!fs.existsSync(www_root)) {
 const files = find.fileSync('index.yaml', www_root);
 //console.log({files})
 
+if (false) {
+  const pdf1 = '/home/dkz/tmp/232-museum-data/3001/1883 Science Pittoresque Barometre thermometre Cheminees.pdf';
+  const pdf2 = '/media/dkz/Seagate/2019-museum-assets/PDF-20191231/1896 Electromecanique chauffage 20200110.pdf';
 
-const pdf1 = '/home/dkz/tmp/232-museum-data/3001/1883 Science Pittoresque Barometre thermometre Cheminees.pdf';
-const pdf2 = '/media/dkz/Seagate/2019-museum-assets/PDF-20191231/1896 Electromecanique chauffage 20200110.pdf';
-
-const loadingTask = pdfjsLib.getDocument(pdf2);
-loadingTask.promise.then(function(pdf) {
-  // you can now use *pdf* here
-  console.log({pdf})
-});
+  const loadingTask = pdfjsLib.getDocument(pdf2);
+  loadingTask.promise.then(function(pdf) {
+    // you can now use *pdf* here
+    console.log({pdf})
+  });
+}
 
 
 //return;
 
 main();
-console.log('Going async...')
+console.log(`Going async... on ${files.length} files`)
 
 
 async function main() {
