@@ -33,7 +33,7 @@ const argv = require('yargs')
 
 
 if (argv._.length <1) {
-  (verbose >=2) && console.log(`@36 Missing argv._:`,argv._);
+  (argv.verbose >=2) && console.log(`@36 Missing argv._:`,argv._);
   console.log(`Need an environment file, ex:
     ./104-upload-pages.js -vv .env-ultimheat.yaml
     =>exit.`);
