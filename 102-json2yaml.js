@@ -158,7 +158,7 @@ function jpeg_lookup(fn) {
 
   for (const dir of dirs) {
     const fpath = path.join(assets,dir,fn)
-    if (fs.existsSync(fpath)) return fpath
+    if (fs.existsSync(fpath)) return fpath;
     (verbose>1) && console.log(`@131 not-found <${fpath}>`)
   }
 }
