@@ -1,5 +1,5 @@
 const assert = require('assert')
-const utils = require('./dkz-lib.js');
+//const utils = require('./dkz-lib.js');
 
 const iso_cc = {
   DE:'Allemagne',
