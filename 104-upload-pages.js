@@ -5,7 +5,7 @@
     THE ORIGINAL WAS IN
     /home/dkz/dev-utpp/museum-1808-massive-upload/upload-batch-85.js
 
-    ATTENTION THIS IS ONLY FOR MUSEUM-V2
+    ATTENTION THIS IS ONLY FOR MUSEUM-V3
 */
 
 
@@ -19,52 +19,42 @@ const monitor = require('pg-monitor');
 var pdfjsLib = require('pdfjs-dist');
 const klaw = require('klaw');
 
+const env = {
+  user: process.env.PGUSER,
+  port: process.env.PGPORT,
+  host: process.env.PGHOST,
+  database: process.env.PGDATABASE,
+  password: process.env.PGPASSWORD,
+};
+console.log({env})
+
+const env_yaml = (fs.existsSync('./.env.yaml')) ?
+  yaml.safeLoad(fs.readFileSync('./.env.yaml', 'utf8')) : {};
+console.log({env_yaml})
+
+Object.assign(env, env_yaml);
+
 const argv = require('yargs')
   .alias('v','verbose').count('verbose')
   .alias('p','password')
   .alias('f','file')
   .alias('d','dir')
   .alias('a','all')
-  .alias('e','env')
-//  .alias('u','upload')
   .options({
     'commit': {default:false},
   }).argv;
 
+Object.assign(env, argv);
 
-if (argv._.length <1) {
-  (argv.verbose >=2) && console.log(`@36 Missing argv._:`,argv._);
-  console.log(`Need an environment file, ex:
-    ./104-upload-pages.js -vv .env-ultimheat.yaml
-    =>exit.`);
-  return;
-}
+assert(env.user)
+assert(env.port)
+assert(env.host)
+assert(env.database)
+assert(env.password)
+assert(env.root) // store
 
-const env = yaml.safeLoad(fs.readFileSync(argv._[0], 'utf8'));
-console.log({env})
-let {host, port=5432, user='postgres', database, root:root_folder} = env;
-
-const password = argv.password || process.env.PGPASSWORD;
-if (!password) {
-  console.log(`Missing password
-    =>exit.`);
-  return;
-}
-/******
-const host = argv.host || process.env.PGHOST || 'localhost';
-const port = argv.port || process.env.PGPORT || '5433';
-const database = argv.database || process.env.PGDATABASE || 'museum-v3';
-const user = argv.user || process.env.PGUSER || 'postgres';
-
-argv.dir = argv.dir || process.env.pdfdir;
-************/
-
-if (!root_folder) {
-  console.log(`Need root-folder ex:
-    root: /media/dkz/Seagate/18.11-Museum-rsync-inhelium/pdf-www
-    =>exit.`);
-  return;
-}
+const {root:root_folder} = env;
+const {host,port,user,database,password} = env;
 
 // ==========================================================================
 
