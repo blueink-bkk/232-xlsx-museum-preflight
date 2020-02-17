@@ -209,7 +209,7 @@ async function upload_museum_pages(fn,db) {
     if (argv.commit) {
       try {
         npages ++;
-        console.log(`files:${nfiles} page:${pageNo} total:${npages}`);
+        console.log(`COMMIT files:${nfiles} page:${pageNo} total:${npages}`);
 //        console.log(`-- page ${pageNo} raw_text:${raw_text.length}`);
 //        const ts_vector = undefined;
         const json_data = {xid}
