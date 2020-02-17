@@ -25,6 +25,16 @@ const wrap = require('word-wrap');
 //const {_assert, fatal_error} = require('./lib/openacs-api');
 //const input_fn = '0-Heating-Museum-from-start-to-31-Mars-2019-FRENCN-20190425.xlsx';
 
+const env = {
+//  input: 'museum.xlsx.json'
+}
+
+const env_yaml = (fs.existsSync('./.env.yaml'))?
+    yaml.safeLoad(fs.readFileSync('./.env.yaml')):{};
+
+//console.log({env})
+Object.assign(env, env_yaml)
+
 
 const argv = require('yargs')
   .alias('v','verbose').count('verbose')
@@ -37,9 +47,11 @@ const argv = require('yargs')
 //    'zero-auteurs': {default:false}, //
   }).argv;
 
-const {verbose, output} = argv;
-//const pg_monitor = (verbose>1);
-const www_root = argv._[0] || '/home/dkz/tmp/232-museum-data'
+Object.assign(env, argv);
+
+const {verbose, root:www_root, assets} = env;
+assert(www_root)  // list of folders XID (store) and index.yaml for each xid.
+assert(assets)    // where are the pdf and jpeg NOT USED because links...
 
 if (!www_root) {
   console.log(`
@@ -83,7 +95,7 @@ console.log(`Going async... on ${files.length} files`)
 
 async function main() {
   for (fn of files) {
-    const article = yaml.safeLoad(fs.readFileSync(fn, 'utf8'))
+    const article = yaml.safeLoad(fs.readFileSync(fn, 'utf8')); // ./xid/index.yaml
     if (article.deleted) continue;
 //    console.log({article})
   //  console.log(`#${article.xid} ${article.deleted?"-deleted":""}`)
