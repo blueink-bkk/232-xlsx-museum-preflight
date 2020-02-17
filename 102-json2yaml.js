@@ -1,5 +1,13 @@
 #! /usr/bin/env node
 
+/*
+
+      INPUT: museum.xlsx.json
+      uses config file: ./.env.json (hard link only)
+
+
+*/
+
 const fs = require('fs-extra');
 const path = require('path');
 const assert = require('assert');
@@ -17,10 +25,22 @@ const yaml = require('js-yaml');
 //const {_assert, fatal_error} = require('./lib/openacs-api');
 //const input_fn = '0-Heating-Museum-from-start-to-31-Mars-2019-FRENCN-20190425.xlsx';
 
+const env = {
+  input: 'museum.xlsx.json'
+}
+
+const env_yaml = (fs.existsSync('./.env.yaml'))?
+    yaml.safeLoad(fs.readFileSync('./.env.yaml')):{};
+
+//console.log({env})
+Object.assign(env, env_yaml)
+//console.log({env})
+
 
 const argv = require('yargs')
   .alias('v','verbose').count('verbose')
   .alias('o','output')
+  .alias('s','soft-links')
 //  .boolean('pg-monitor')
 //  .boolean('commit')
   .options({
@@ -29,31 +49,30 @@ const argv = require('yargs')
 //    'zero-auteurs': {default:false}, //
   }).argv;
 
-const {verbose, output} = argv;
-//const pg_monitor = (verbose>1);
-const input_fn = argv._[0];
+Object.assign(env, argv);
 
-if (!input_fn) {
+const {verbose, root:www_root} = env;
+assert(www_root)
+
+if (!env.input) {
   console.log(`
     ************************************************
-    FATAL : Missing input file
-    ./102-json2yaml.js <input-file.json>
+    FATAL : Missing input file declaration
+    default is "museum.xlsx.json"
     ************************************************
     `);
-  process.exit(-1);
-
+  return;
 }
 
-if (!fs.existsSync(input_fn)) {
+if (!fs.existsSync(env.input)) {
   console.log(`
-    FATAL : input file not found <${input_fn}>
+    FATAL : input file-not-found <${env.input}>
     `);
-  process.exit(-1);
+  return;
 }
 
 
-
-const json = loadJsonFile.sync(input_fn)
+const json = loadJsonFile.sync(env.input)
 console.log(`loaded json file ${Object.keys(json).length} articles. (included deleted)`)
 
 /**
@@ -61,14 +80,18 @@ console.log(`loaded json file ${Object.keys(json).length} articles. (included de
     with index.yaml + jpeg + pdf.
 **/
 
-const www_root = output || '/home/dkz/tmp/232-museum-data';
 
 main();
 console.log('Going async...')
 
 async function main() {
+  let a_Count =0;
   for (article of json) {
+    a_Count ++;
     if (article.deleted) continue;
+
+    console.log(`-[${a_Count}]- xid:${article.xid} h1:${article.h1}`);
+
     const fa = path.join(www_root,`${article.xid}`)
     /*
           create folder
@@ -86,9 +109,9 @@ async function main() {
         const dest = path.join(fa, article.pic);
         if (fs.existsSync(dest)) fs.unlinkSync(dest)
         fs.symlinkSync(jpeg_fn, dest);
-        console.log(`@87 #${article.xid} pic symlink Ok. <${jpeg_fn}>`)
+        (verbose>1) && console.log(`@87 #${article.xid} pic symlink Ok. <${jpeg_fn}>`)
       } else {
-        console.log(`@89 #${article.xid} pic not-found <${article.pic}>`)
+        (verbose>1) && console.log(`@89 #${article.xid} pic not-found <${article.pic}>`)
       }
     }
 
@@ -104,9 +127,9 @@ async function main() {
         const dest = path.join(fa, link.fn);
         if (fs.existsSync(dest)) fs.unlinkSync(dest)
         fs.symlinkSync(pdf_fn, dest);
-        console.log(`@104 #${article.xid} pdf symlink Ok. <${pdf_fn}>`)
+        (verbose>1) && console.log(`@104 #${article.xid} pdf symlink Ok. <${pdf_fn}>`)
       } else {
-        console.log(`@106 #${article.xid} pdf not-found <${link.fn}>`)
+        (verbose>1) && console.log(`@106 #${article.xid} pdf not-found <${link.fn}>`)
       }
     })
 
@@ -120,6 +143,7 @@ async function main() {
 
     fs.writeFileSync(path.join(fa,'index.yaml'),_yaml)
   }
+  console.log(`done processing ${json.length} articles.`)
 }
 
 
@@ -134,7 +158,7 @@ function jpeg_lookup(fn) {
   for (const dir of dirs) {
     const fpath = path.join(dir,fn)
     if (fs.existsSync(fpath)) return fpath
-    console.log(`@131 not-found <${fpath}>`)
+    (verbose>1) && console.log(`@131 not-found <${fpath}>`)
   }
 }
 
@@ -172,8 +196,7 @@ function validate_xtrans(xlsx) {
       const name = xnor3(_title)
       _h[name] = _h[name] || new Set([_title]);
       if (!_h[name].has(_title)) {
-        verbose &&
-        console.log(`${it.xid} NEAR-MISS [${object_type}] [${_title}] [${Array.from(_h[name]).join(', ')}]`);
+        (verbose>1) && console.log(`${it.xid} NEAR-MISS [${object_type}] [${_title}] [${Array.from(_h[name]).join(', ')}]`);
       }
       _h[name].add(title);
     })
@@ -205,8 +228,7 @@ function validate_xtrans(xlsx) {
       const {sec, xid, co} = it;
       let {indexNames} = it; // can be null
       if (!indexNames) {
-        verbose &&
-        console.log(`${xid} WARNING: Missing indexName - fixed by using h1.`)
+        (verbose>1) && console.log(`${xid} WARNING: Missing indexName - fixed by using h1.`)
         err_Count +=1;
       }
       indexNames = indexNames || [h1];
@@ -226,8 +248,7 @@ function validate_xtrans(xlsx) {
       const {h1, auteurs} = it;
       let {indexNames} = it; // can be null
       if (!indexNames) {
-        verbose &&
-        console.log(`${xid} WARNING: Missing indexName - fixed by using h1.`)
+        (verbose>1) && console.log(`${xid} WARNING: Missing indexName - fixed by using h1.`)
         err_Count +=1;
       }
       indexNames = indexNames || [h1];
