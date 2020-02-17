@@ -6,18 +6,18 @@ const assert = require('assert');
 var jsonfile = require('jsonfile');
 
 /*
-const Massive = require('massive');
-const monitor = require('pg-monitor');
-const pdfjsLib = require('pdfjs-dist');
-const yaml = require('js-yaml');
-const utils = require('./dkz-lib.js');
-const hash = require('object-hash');
-const cms = require('./cms-openacs.js');
+  Convert museum.xlsx => museum.xlsx.json
 */
 
 const xlsx_fn = './museum.xlsx';
 const xlsx = require('./xlsx2json.js')(xlsx_fn);
 jsonfile.writeFileSync(xlsx_fn+".json",xlsx,{spaces:2})
+
+
+/*
+  Do some validations and
+  create lists auteurs, constructeurs, marques.
+*/
 
 let deleted_Count =0;
 let xlsx_Count =0;
@@ -92,3 +92,9 @@ Object.keys(_mk).sort((a,b)=>(a.localeCompare(b)))
     console.log(`@86 -- [${xid}] ${_xlsx[xid].indexNames[0]}`);
   })
 })
+
+console.log(`xlsx total-rows:${xlsx_Count} deleted:${deleted_Count}`)
+console.log(`${Object.keys(_au).length} auteurs`)
+console.log(`${Object.keys(_constructeurs).length} constructeurs`)
+console.log(`${Object.keys(_mk).length} marques`)
+console.log('-eoj-')

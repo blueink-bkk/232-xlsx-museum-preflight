@@ -45,6 +45,11 @@ console.log({env})
 let {host, port=5432, user='postgres', database, root:root_folder} = env;
 
 const password = argv.password || process.env.PGPASSWORD;
+if (!password) {
+  console.log(`Missing password
+    =>exit.`);
+  return;
+}
 /******
 const host = argv.host || process.env.PGHOST || 'localhost';
 const port = argv.port || process.env.PGPORT || '5433';
