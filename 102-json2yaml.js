@@ -51,8 +51,9 @@ const argv = require('yargs')
 
 Object.assign(env, argv);
 
-const {verbose, root:www_root} = env;
+const {verbose, root:www_root, assets} = env;
 assert(www_root)
+assert(assets)
 
 if (!env.input) {
   console.log(`
@@ -149,14 +150,14 @@ async function main() {
 
 function jpeg_lookup(fn) {
   const dirs = [
-    '/media/dkz/Seagate/2019-museum-assets/JPG-20200206',
-    '/media/dkz/Seagate/2019-museum-assets/JPG-20191231',
-    '/media/dkz/Seagate/2019-museum-assets/new-pdf-and-jpg-20190425',
-    '/media/dkz/Seagate/2019-museum-assets/jpeg-www'
+    'JPG-20200206',
+    'JPG-20191231',
+    'new-pdf-and-jpg-20190425',
+    'jpeg-www'
   ];
 
   for (const dir of dirs) {
-    const fpath = path.join(dir,fn)
+    const fpath = path.join(assets,dir,fn)
     if (fs.existsSync(fpath)) return fpath
     (verbose>1) && console.log(`@131 not-found <${fpath}>`)
   }
@@ -165,15 +166,15 @@ function jpeg_lookup(fn) {
 
 function pdf_lookup(fn) {
   const dirs = [
-    '/media/dkz/Seagate/2019-museum-assets/pdf-20200206',
-    '/media/dkz/Seagate/2019-museum-assets/PDF-20200205',
-    '/media/dkz/Seagate/2019-museum-assets/PDF-20191231',
-    '/media/dkz/Seagate/2019-museum-assets/new-pdf-and-jpg-20190425',
-    '/media/dkz/Seagate/2019-museum-assets/pdf-www'
+    'pdf-20200206',
+    'PDF-20200205',
+    'PDF-20191231',
+    'new-pdf-and-jpg-20190425',
+    'pdf-www'
   ];
 
   for (const dir of dirs) {
-    const fpath = path.join(dir,fn)
+    const fpath = path.join(assets,dir,fn)
     if (fs.existsSync(fpath)) return fpath
   }
 }
