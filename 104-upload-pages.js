@@ -40,9 +40,11 @@ const argv = require('yargs')
   .alias('f','file')
   .alias('d','dir')
   .alias('a','all')
+  .alias('c','commit')
   .options({
-    'commit': {default:false},
+    'commit': {type:'boolean', default:false},
   }).argv;
+console.log('commit:',{argv})
 
 Object.assign(env, argv);
 
@@ -53,7 +55,7 @@ assert(env.database)
 assert(env.password)
 assert(env.root) // store
 
-const {root:root_folder} = env;
+const {root:root_folder, verbose} = env;
 const {host,port,user,database,password} = env;
 
 // ==========================================================================
@@ -177,6 +179,7 @@ async function walk(db) {
 
 async function upload_museum_pages(fn,db) {
 //  const xid = path.dirname(fn).split('/'); // last one
+  (verbose >=2) && console.log(`@180 entering upload_museum_pages(${fn})`)
   const dirname = path.dirname(fn);
   let xid = dirname.substring(dirname.lastIndexOf('/'));
   if (!xid) {
@@ -199,8 +202,9 @@ async function upload_museum_pages(fn,db) {
 
   for (let pageNo=1; pageNo <= doc.numPages; pageNo++) {
     const txt_fn = (fn + `-${('0000'+pageNo).substr(-4)}.txt`);
+    (verbose >=2) && console.log(`@203 processing page (${txt_fn}) commit=${argv.commit}`)
     if (!fs.existsSync(txt_fn)) {
-//      console.log(`file-not-found: <${txt_fn}>`)
+      console.log(`@205 ALERT file-not-found: <${txt_fn}>`)
       continue;
     }
 
@@ -209,7 +213,7 @@ async function upload_museum_pages(fn,db) {
     if (argv.commit) {
       try {
         npages ++;
-        console.log(`files:${nfiles} page:${pageNo} total:${npages}`);
+        console.log(`COMMIT page:${pageNo} total:${npages} files:${nfiles}`);
 //        console.log(`-- page ${pageNo} raw_text:${raw_text.length}`);
 //        const ts_vector = undefined;
         const json_data = {xid}
