@@ -145,7 +145,7 @@ async function main() {
       where (file_id = id) and (path <@ 'museum.yaml')
       and ((data->>'sec')::integer < 3)
       and (data->>'mk' is not null)
-      order by data->>'xid'
+      order by data->>'yp'
       ;
       `,[],{single:false})
     // console.log({data})

@@ -10,16 +10,20 @@ create extension if not exists ltree;
 
 create table if not exists tvec.files (
   id serial primary key,
-  xid varchar(20), -- reference to an external ID
-  path ltree,      -- museum, jpc, blueink, etc....
-  filename text not null,
+  path ltree,      -- museum.pdf, jpc, blueink, etc....
+  filename text not null, -- ex: 'https://www.costco.com/laptops
   lang text default 'fr',
+  xid varchar(20), -- reference to an external ID
   unique (path, filename)
 );
 
 create table if not exists tvec.pages (
-  pageno integer not null,
   file_id integer references tvec.files(id) on delete cascade,
+  pageno integer not null,
+  -- p2 : another ltree for url to avoid too many files... 
+  -- ex: path: 'https://www.costco.com/
+  --     cat: lg-gram-15-touchscreen-laptop---intel-core-i7---1080p.product
+  --     .100408465.html'
   data jsonb, -- pour les fiches du musee et articles du dico.
   raw_text text,
   tsv tsvector,
