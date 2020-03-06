@@ -20,7 +20,7 @@ create table if not exists tvec.files (
 create table if not exists tvec.pages (
   file_id integer references tvec.files(id) on delete cascade,
   pageno integer not null,
-  -- p2 : another ltree for url to avoid too many files... 
+  -- p2 : another ltree for url to avoid too many files...
   -- ex: path: 'https://www.costco.com/
   --     cat: lg-gram-15-touchscreen-laptop---intel-core-i7---1080p.product
   --     .100408465.html'
@@ -30,10 +30,10 @@ create table if not exists tvec.pages (
   unique (file_id, pageno)
 );
 
+-- new_file (path, filename, lang)
+drop function if exists tvec.new_file(ltree, text, text)  cascade;
 
-drop function if exists tvec.new_file cascade;
-
-create function tvec.new_file(path ltree, filename text, lang text default 'fr'::text) returns integer
+create function tvec.new_file(_path ltree, filename text, lang text default 'fr'::text) returns integer
     LANGUAGE plpgsql
     AS $$
 declare
@@ -42,16 +42,43 @@ declare
 	_lang text := lang;
 begin
 	select id into iret
-	from tvec.files as f where f.filename = fn;
+	from tvec.files as f where (f.filename = fn) and (f.path = _path);
 
 	raise notice 'iret:%',iret;
 	if iret is null then
-		insert into tvec.files (path, filename, lang) values(path, fn,_lang) returning id into iret;
+		insert into tvec.files (path, filename, lang) values(_path, fn,_lang) returning id into iret;
 	end if;
 raise notice 'iret2:%',iret;
 return iret;
 end;
 $$;
+
+
+-- new_file (path, xid, filename, lang)
+-- filename is optional
+
+drop function if exists tvec.new_file(ltree, text, text, text) cascade;
+
+create function tvec.new_file(_path ltree, _xid text, _filename text, _lang text default 'fr'::text) returns integer
+    LANGUAGE plpgsql
+    AS $$
+declare
+	iret integer := -1;
+--	fn text := filename;
+--	_lang text := lang;
+begin
+	select id into iret
+	from tvec.files as f where (f.path = _path) and (f.xid = _xid) and (f.filename = _filename);
+	raise notice 'new_file(1)(p:%, xid:%, fn:%) => iret:%', _path, _xid, _filename, iret;
+	if iret is null then
+		insert into tvec.files (path, xid, filename, lang)
+      values(_path, _xid, _filename, _lang) returning id into iret;
+	end if;
+  raise notice 'new_file(2)(p:%, xid:%, fn:%) => iret:%', _path, _xid, _filename, iret;
+  return iret;
+end;
+$$;
+
 
 
 drop function if exists tvec.write_page cascade;
@@ -87,6 +114,50 @@ begin
 		raise notice 'unique violation -> Updating instead:';
 		update tvec.pages p
 		set (raw_text, tsv) = (_raw_text,_tsv)
+		where p.pageno = _pageno and p.file_id = _file_id;
+	end;
+
+end;
+$$;
+
+
+drop function if exists tvec.write_pagex cascade;
+
+create function tvec.write_pagex(_path text, _xid text, _filename text, _pageno integer, _data jsonb, _raw_text text) returns void
+    LANGUAGE plpgsql
+    AS $$
+declare
+  _file_id integer;
+  path ltree := _path;
+--  _pageno integer := pageno;
+--  _raw_text text := raw_text;
+--  _data jsonb := data;
+  _tsv tsvector;
+begin
+--  if (filename is null) then
+--      raise exception 'Missing filename';
+--  end if;
+
+  if (_xid is null) then
+      raise exception 'Missing XID';
+  end if;
+
+	_file_id := tvec.new_file(path, _xid, _filename, 'fr');
+  raise notice 'file-id:%', _file_id;
+
+  --if (id is null) then
+  --    raise exception 'Fatal error pdf file not found pdf:id:%',id;
+  --end if;
+
+  raise notice 'Processing raw_text for %::%', _filename, _pageno;
+
+  insert into tvec.pages (file_id, pageno, data, raw_text, tsv)
+  select _file_id, _pageno, _data, _raw_text, null;
+  exception
+  	when unique_violation then begin
+		raise notice 'unique violation -> Updating instead:';
+		update tvec.pages p
+		set (data,raw_text, tsv) = (_data, _raw_text, _tsv)
 		where p.pageno = _pageno and p.file_id = _file_id;
 	end;
 
@@ -176,10 +247,19 @@ create or replace function tvec.remove_pages(_path ltree, _filename text) return
 declare
   _file_id integer;
 begin
-  select id into _file_id
+  select f.id into _file_id
   from tvec.files f where f.filename = _filename and f.path = _path;
 
   raise notice 'found file(%)(%)=>%',_path, _filename, _file_id;
   delete from tvec.pages where tvec.pages.file_id = _file_id;
+end;
+$$ language plpgsql;
+
+drop function if exists tvec.remove_xid(ltree, text);
+
+create or replace function tvec.remove_xid(_path ltree, _xid text) returns void as $$
+declare
+begin
+  delete from tvec.files where path = _path and xid = _xid;
 end;
 $$ language plpgsql;
